@@ -16,10 +16,19 @@ func (l logWrapper) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fs := http.FileServer(http.Dir(os.ExpandEnv("${HOME}/Public")))
+	dir := os.Getenv("DIR")
+	if dir == "" {
+		dir = os.ExpandEnv("${HOME}/Public")
+	}
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8888"
+	}
+
+	fs := http.FileServer(http.Dir(dir))
 	http.Handle("/", logWrapper{fs})
-	log.Println("Serving on http://0.0.0.0:8888/")
-	if err := http.ListenAndServe(":8888", nil); err != nil {
+	log.Printf("Serving on http://0.0.0.0:%s/\n", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		panic(err)
 	}
 }
