@@ -34,9 +34,18 @@ func printInterfaces(port int) {
 }
 
 func main() {
-	dir := os.Getenv("DIR")
-	if dir == "" {
-		dir = os.ExpandEnv("${HOME}/Public")
+	dir := os.ExpandEnv("${HOME}/Public")
+	if len(os.Args) == 2 {
+		dir = os.Args[1]
+	}
+	if info, err := os.Stat(dir); err != nil {
+		if os.IsNotExist(err) {
+			log.Print("Warning: shared directory doesn't exist: " + dir)
+		} else {
+			log.Printf("Warning: can't get info on directory %q: %s", dir, err.Error())
+		}
+	} else if !info.IsDir() {
+		log.Print("Warning: you're supposed to share a file, not a directory: " + dir)
 	}
 	portStr := os.Getenv("PORT")
 	port, _ := strconv.Atoi(portStr)
