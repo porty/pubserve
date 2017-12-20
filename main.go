@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 )
 
 type logWrapper struct {
@@ -26,9 +25,10 @@ func printInterfaces(port int) {
 		return
 	}
 	for _, addr := range addrs {
-		parts := strings.Split(addr.String(), "/")
-		if len(parts) == 2 {
-			log.Printf("Listening on http://%s:%d/", parts[0], port)
+		if ipnet, ok := addr.(*net.IPNet); ok {
+			if len(ipnet.Mask) == 4 {
+				log.Printf("Listening on http://%s:%d/", ipnet.IP.String(), port)
+			}
 		}
 	}
 }
