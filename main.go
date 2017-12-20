@@ -47,9 +47,9 @@ func main() {
 	} else if !info.IsDir() {
 		log.Print("Warning: you're supposed to share a file, not a directory: " + dir)
 	}
-	portStr := os.Getenv("PORT")
-	port, _ := strconv.Atoi(portStr)
-	if port == 0 {
+
+	port, _ := strconv.Atoi(os.Getenv("PORT"))
+	if port <= 0 || port >= 0xffff {
 		port = 8888
 	}
 
